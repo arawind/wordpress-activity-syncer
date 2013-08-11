@@ -121,11 +121,22 @@ function awSyncerGithub() {
 */
 function aw_hidePostsFromFront($query){
 //	if($query->is_home() && $query->is_main_query() || $query->is_day() || $query->is_date() || $query->is_month()){
-	if($query->is_home() || $query->is_page()  ){
+	if($query->is_home() ){
 		$linksCat = get_cat_ID('Links');
 		$category = get_cat_ID('Playlists');
 		$query->set('cat', '-'.$linksCat.',-'.$category);
 	}
 }
 add_action('pre_get_posts', 'aw_hidePostsFromFront');
+
+/*
+	Load widget
+*/
+function aw_widgetLoad(){
+     require_once('widget.php');
+     aw_regWidget();
+}
+
+add_action( 'widgets_init', 'aw_widgetLoad');
+
 ?>

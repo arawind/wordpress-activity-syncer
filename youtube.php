@@ -29,6 +29,9 @@ function awYoutubeSyncer($case){
 	$OAUTH2_CLIENT_ID = 'id here';
 	$OAUTH2_CLIENT_SECRET = 'secret here';
 	
+	$OAUTH2_CLIENT_ID = '91962864149.apps.googleusercontent.com';
+	$OAUTH2_CLIENT_SECRET = 'O9yM8t3Ddmmzd7hlY3RKOGOs';
+	
 	$client = new Google_Client();
 	$client->setClientId($OAUTH2_CLIENT_ID);
 	$client->setClientSecret($OAUTH2_CLIENT_SECRET);
@@ -61,7 +64,7 @@ function awYoutubeSyncer($case){
 					$channel = $_POST['awYoutubeChannelID'];
 					if($channel == NULL)
 						return;
-					$playlistsResponse = $youtube->playlists->listPlaylists('id,snippet', array(
+					$playlistsResponse = $youtube->playlists->listPlaylists('id,snippet,status', array(
 							'channelId' => $channel,
 							'maxResults'=> 50
 					));
@@ -69,19 +72,21 @@ function awYoutubeSyncer($case){
 					$playlistIDs = array();
 					$playlistTitles = array();
 					foreach ($playlistsResponse['items'] as $playlist) {
-						$playlistId = $playlist['id'];
-						$playlistIDs[] = $playlistId;
-						$playlistTitle = $playlist['snippet']['title'];
-						$playlistTitles[] = $playlistTitle;
+						if($playlist['status']['privacyStatus'] == "public"){
+							$playlistId = $playlist['id'];
+							$playlistIDs[] = $playlistId;
+							$playlistTitle = $playlist['snippet']['title'];
+							$playlistTitles[] = $playlistTitle;
 					
-						$htmlBody.="<p>$playlistTitle - $playlistId</p>";
+							//$htmlBody.="<p>$playlistTitle - $playlistId</p>";
+						}
 					}
 					$favList = substr_replace($channel, 'FL', 0, 2);
 					$playlistsResponse = $youtube->playlists->listPlaylists('snippet', array(
 							'id' => $favList
 					));
 					if($playlistsResponse['items'][0]['snippet']['title']){
-						$htmlBody.="<p>".$playlistsResponse['items'][0]['snippet']['title']." - $favList</p>";
+						//$htmlBody.="<p>".$playlistsResponse['items'][0]['snippet']['title']." - $favList</p>";
 						$playlistIDs[] = $favList;
 						$playlistTitles[] = $playlistsResponse['items'][0]['snippet']['title'];
 					}
@@ -170,7 +175,6 @@ function awYoutubeSyncer($case){
 								//var_dump($postid);
 								wp_set_post_terms($postid, array($category), 'category');
 								wp_set_post_terms($postid, $post['tags_input'], 'post_tag', true);
-								set_post_type($postid, 'youtube');
 							}
 						}
 						
@@ -240,6 +244,7 @@ function awYoutubeSyncer($case){
     <?php 
     	$pIds = get_option('awYoutubePlaylistIDs');
     	$pTitles = get_option('awYoutubePlaylistTitles');
+    	//if($pIds && $pTitles){
     	$playlists = array_combine($pIds, $pTitles);
     	foreach($playlists as $id => $title){
 			?>
@@ -249,7 +254,7 @@ function awYoutubeSyncer($case){
     	//print_r(get_option('awYoutubePlaylistIDs'));
     	//print_r(get_option('awYoutubePlaylistTitles'));
     ?>
-    <?php submit_button('Sync Playlists') ?>
+    <?php submit_button('Sync Playlists'); ?>
 </form>
 
 
