@@ -170,6 +170,7 @@ function awYoutubeSyncer($case){
 								//var_dump($postid);
 								wp_set_post_terms($postid, array($category), 'category');
 								wp_set_post_terms($postid, $post['tags_input'], 'post_tag', true);
+								set_post_type($postid, 'youtube');
 							}
 						}
 						

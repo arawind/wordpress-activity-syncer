@@ -8,7 +8,6 @@ Description: Syncs your activity on youtube and github to your wordpress server
 */
 ?><?php
 
-
 function awSyncGithub() {
       require_once('github.php');
       awGithubSyncer();
@@ -116,4 +115,17 @@ function awSyncerGithub() {
     require_once('github.php');
     awechoGithub();
 }
+
+/*
+	Hide posts from home page
+*/
+function aw_hidePostsFromFront($query){
+//	if($query->is_home() && $query->is_main_query() || $query->is_day() || $query->is_date() || $query->is_month()){
+	if($query->is_home() || $query->is_page()  ){
+		$linksCat = get_cat_ID('Links');
+		$category = get_cat_ID('Playlists');
+		$query->set('cat', '-'.$linksCat.',-'.$category);
+	}
+}
+add_action('pre_get_posts', 'aw_hidePostsFromFront');
 ?>
