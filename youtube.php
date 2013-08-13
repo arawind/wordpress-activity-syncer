@@ -29,8 +29,6 @@ function awYoutubeSyncer($case){
 	$OAUTH2_CLIENT_ID = 'id here';
 	$OAUTH2_CLIENT_SECRET = 'secret here';
 	
-	$OAUTH2_CLIENT_ID = '91962864149.apps.googleusercontent.com';
-	$OAUTH2_CLIENT_SECRET = 'O9yM8t3Ddmmzd7hlY3RKOGOs';
 	
 	$client = new Google_Client();
 	$client->setClientId($OAUTH2_CLIENT_ID);
