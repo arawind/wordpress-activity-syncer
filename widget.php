@@ -41,7 +41,7 @@ class YoutubePlaylist extends WP_Widget {
 				$link = '';
 			
 			if($myQuery->have_posts()){
-				echo $link;
+				
 				echo "<ul class='awYoutubeList' id='list$id'>";
 				
 				while($myQuery->have_posts()) { 
@@ -81,10 +81,79 @@ class YoutubePlaylist extends WP_Widget {
 
 function aw_regWidget(){
 	register_widget( 'YoutubePlaylist' );
+	register_widget( 'GithubActivity' );
 	if(!is_admin()){
 		//wp_enqueue_style('awStyle', plugins_url('style.css', __FILE__));
 		wp_enqueue_script('awScript', plugins_url('script.js', __FILE__), array('jquery'));
 	}
 }
 
+
+
+
+
+
+
+
+class GithubActivity extends WP_Widget {
+
+	public function __construct() {
+		$widgOptions = array('classname'=>'GithubActivity', 'description'=> 'Shows the synced GitHub activity');
+		$this->WP_Widget('GithubActivity', 'Github Activity', $widget_ops);
+	}
+
+	public function widget( $args, $instance ) {
+		extract($args, EXTR_SKIP);
+	 
+		echo $before_widget;
+		$title = empty($instance['title']) ? '' : apply_filters('widget_title', $instance['title']);
+		 
+		if (!empty($title))
+			echo $before_title . $title . $after_title;;
+		
+		$category = get_cat_ID('GitHub'); 
+		
+		$argus = (array('cat'=>$category, 'showposts'=>5));
+		$myQuery = new WP_Query($argus);
+			
+		if($myQuery->have_posts()){
+		
+			echo "<ul style>";
+		
+			while($myQuery->have_posts()) { 
+				$myQuery->the_post();
+				echo "<li>";
+				 echo get_the_content();
+				 //preg_match_all('/<a[^>]+href=([\'"])(.+?)\1[^>]*>/i', $str, $m);
+				 //echo "<li> <a href='{$m[2][0]}' target='_blank'>".get_the_title()."</a></li>";
+				echo "</li>";
+			}
+			
+			echo "</ul>";
+		}
+		wp_reset_query();  
+
+		 
+		echo $after_widget;
+	}
+
+ 	public function form( $instance ) {
+		$instance = wp_parse_args((array) $instance, array( 'title' => '' ));
+		$title = $instance['title'];
 ?>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>">Title:
+		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo attribute_escape($title); ?>" />
+		</label></p>
+		
+<?php
+  	}
+
+	public function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance['title'] = $new_instance['title'];
+		return $instance;
+	}
+}
+
+?>
+
