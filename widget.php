@@ -156,4 +156,3 @@ class GithubActivity extends WP_Widget {
 }
 
 ?>
-

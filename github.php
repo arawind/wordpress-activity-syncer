@@ -30,6 +30,7 @@ function awGithubSyncer(){
        		if($inhtml->find('div.details', 0)){
        			foreach($inhtml->find('div.details div.commits') as $commits){
        				foreach($commits->find('ul li') as $lielem){
+	       				$lielem->find('code a', 0)->href = "https://github.com".$lielem->find('code a', 0)->href;
        					$inhtmlNew .= "; - ".$lielem->find('code', 0)->innertext. " - ". $lielem->find('div.message blockquote', 0)->innertext ;
        				}
        			}
